@@ -10,6 +10,7 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.Context;
 
 public class DriveTrain {
@@ -29,12 +30,14 @@ public class DriveTrain {
         follower.setPose(previousPose);
     }
 
-    public void ManualDrive(double forward, double lateral, double turn) {
+    public void ManualDrive(double forward, double lateral, double turn, Alliance alliance) {
+        double offset = (alliance == Alliance.BLUE) ? Math.PI : 0;
         DrivePowers powers = ManualDrive.fieldCentric(
                 forward,
                 lateral,
                 turn,
-                follower.pose().heading()
+                follower.pose().heading(),
+                offset
         );
         ManualDrive.driveOrHold(follower, powers);
     }
