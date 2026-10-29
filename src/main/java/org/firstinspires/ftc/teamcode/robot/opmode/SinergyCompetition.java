@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.main.opmode;
+package org.firstinspires.ftc.teamcode.robot.opmode;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
 
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.util.SinergyOpmode;
-import org.firstinspires.ftc.teamcode.subsystems.*;
 
 public class SinergyCompetition extends SinergyOpmode {
     @Override
@@ -27,7 +25,6 @@ public class SinergyCompetition extends SinergyOpmode {
                     gamepad1.right_stick_x,
                     alliance()
             );
-
         });
     }
 }

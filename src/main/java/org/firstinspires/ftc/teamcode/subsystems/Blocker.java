@@ -15,33 +15,28 @@ public final class Blocker {
     public static double unblockPosition = 0.0;
 
     private final Context context;
-    private final Servo blockerPolen;
-    private final Servo blockerNectar;
+    private final Servo blocker;
 
     public Blocker(Context context) {
         this.context = context;
-        blockerPolen = context.servo("blockerPolen");
-        blockerNectar = context.servo("blockerNectar");
+        blocker = context.servo("blocker");
     }
 
     public Command block() {
         return instant(() -> {
-            blockerPolen.setPosition(blockPosition);
-            blockerNectar.setPosition(blockPosition);
-        }).requiring(blockerPolen, blockerNectar);
+            blocker.setPosition(blockPosition);
+        }).requiring(blocker);
     }
 
     public Command unblock() {
         return instant(() -> {
-            blockerPolen.setPosition(unblockPosition);
-            blockerNectar.setPosition(unblockPosition);
-        }).requiring(blockerPolen, blockerNectar);
+            blocker.setPosition(unblockPosition);
+        }).requiring(blocker);
     }
 
     public Command periodic() {
         return infinite(() -> {
-            context.telemetry.addData("Blocker/polen", blockerPolen.getPosition());
-            context.telemetry.addData("Blocker/nectar", blockerNectar.getPosition());
+            context.telemetry.addData("Blocker/nectar", blocker.getPosition());
         });
     }
 }

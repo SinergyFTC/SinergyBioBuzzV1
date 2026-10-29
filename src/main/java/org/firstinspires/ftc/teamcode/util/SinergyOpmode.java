@@ -17,6 +17,7 @@ public abstract class SinergyOpmode extends OpMode {
     protected Intake intake;
     protected Blocker blocker;
     protected Context context;
+    protected Hood hood;
 
 
     protected static Alliance alliance() {
