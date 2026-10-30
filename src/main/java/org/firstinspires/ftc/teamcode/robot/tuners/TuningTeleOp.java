@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.tuners;
 
+import static com.pedropathing.ivy.Scheduler.schedule;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.util.SinergyOpmode;
@@ -28,8 +30,14 @@ public class TuningTeleOp extends SinergyOpmode {
             if (gamepad1.leftBumperWasPressed()) intake.reverse().schedule();
             if (gamepad1.leftBumperWasReleased()) intake.off().schedule();
 
-            if(gamepad1.dpadDownWasPressed()) blocker.unblock().schedule();
-            if(gamepad1.dpadUpWasPressed()) blocker.block().schedule();
+            if(gamepad1.dpadDownWasPressed()) schedule(
+                    blocker.blockPolen(),
+                    blocker.blockNectar()
+            );
+            if(gamepad1.dpadUpWasPressed()) schedule(
+                    blocker.unblockPolen(),
+                    blocker.blockNectar()
+            );
         });
     }
 }

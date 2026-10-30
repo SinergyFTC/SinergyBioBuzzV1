@@ -9,34 +9,51 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.util.Context;
 
+import java.util.function.DoubleSupplier;
+
 @Config("Blocker Subsystem")
 public final class Blocker {
-    public static double blockPosition = 0.0;
-    public static double unblockPosition = 0.0;
+    public static double blockPositionPolen = 0.0;
+    public static double unblockPositionPolen = 0.0;
+    public static double blockPositionNectar = 0.0;
+    public static double unblockPositionNectar = 0.0;
 
     private final Context context;
-    private final Servo blocker;
+    private final Servo blockerPolen;
+    private final Servo blockerNectar;
 
     public Blocker(Context context) {
         this.context = context;
-        blocker = context.servo("blocker");
+        blockerPolen = context.servo("blockerPolen");
+        blockerNectar = context.servo("blockerNectar");
     }
 
-    public Command block() {
+    private Command set(Servo servo, DoubleSupplier position) {
         return instant(() -> {
-            blocker.setPosition(blockPosition);
-        }).requiring(blocker);
+            servo.setPosition(position.getAsDouble());
+        }).requiring(servo);
+    }
+    public Command blockPolen() {
+        return set(blockerPolen,() -> blockPositionPolen);
     }
 
-    public Command unblock() {
-        return instant(() -> {
-            blocker.setPosition(unblockPosition);
-        }).requiring(blocker);
+    public Command unblockPolen() {
+        return set(blockerPolen, () -> unblockPositionPolen);
     }
+
+    public Command blockNectar() {
+        return set(blockerNectar, () -> blockPositionNectar);
+    }
+
+    public Command unblockNectar() {
+        return set(blockerNectar, () -> unblockPositionNectar);
+    }
+
 
     public Command periodic() {
         return infinite(() -> {
-            context.telemetry.addData("Blocker/nectar", blocker.getPosition());
+            context.telemetry.addData("Blocker/nectar", blockerNectar.getPosition());
+            context.telemetry.addData("Blocker/Polen", blockerPolen.getPosition());
         });
     }
 }

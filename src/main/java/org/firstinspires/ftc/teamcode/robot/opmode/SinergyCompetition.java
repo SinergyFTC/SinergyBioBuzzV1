@@ -12,7 +12,10 @@ public class SinergyCompetition extends SinergyOpmode {
 
     @Override
     public void start() {
-        blocker.block().schedule();
+        schedule(
+                blocker.blockPolen(),
+                blocker.unblockNectar()
+        );
         flyWheel.on().schedule();
     }
 

@@ -8,8 +8,9 @@ import org.firstinspires.ftc.teamcode.math.SOTM;
 import org.firstinspires.ftc.teamcode.math.TurretKinematics;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.Context;
+import org.firstinspires.ftc.teamcode.util.TurretAngle;
 
-public class ShootingController {
+public class  ShootingController {
     private final Context context;
     private final Turret turret;
     private final FlyWheel flyWheel;
@@ -27,6 +28,10 @@ public class ShootingController {
 
         Vector2D aim = SOTM.getAimVector(turretPose, turretVelocity, goal, alliance);
         Vector2D virtualPosition = goal.toVector2D().minus(aim);
+
+        double angle = TurretAngle.toTarget(aim, robotPose.heading(), robotVelocity.omega);
+        turret.setTarget(angle);
+
     }
 
 }
