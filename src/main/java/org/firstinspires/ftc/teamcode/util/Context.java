@@ -21,23 +21,13 @@ public class Context {
     public HardwareMap hardwareMap;
     public Telemetry telemetry;
 
-    public Context(OpMode opmode){
+    public Context(OpMode opmode) {
         hardwareMap = opmode.hardwareMap;
-        telemetry = new MultipleTelemetry(telemetry,
+        telemetry = new MultipleTelemetry(opmode.telemetry,
                 FtcDashboard.getInstance().getTelemetry());
 
     }
-    public void addPose(String name, Pose pose) {
-        if(AdvantageScope) {
-            telemetry.addData(name + "x", 144 - pose.x());
-            telemetry.addData(name + "y", 144 - pose.y());
-            telemetry.addData(name + "heading (°)", 180 - Math.toDegrees(pose.heading()));
-        } else {
-            telemetry.addData(name + "x",  pose.x());
-            telemetry.addData(name + "y", pose.y());
-            telemetry.addData(name + "heading (°)", Math.toDegrees(pose.heading()));
-        }
-    }
+
     public Servo servo(String name) {
         return new CachingServo(hardwareMap.servo.get(name));
     }
@@ -45,9 +35,4 @@ public class Context {
     public DcMotorEx motor(String name) {
         return new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, name));
     }
-
-    public VoltageSensor voltagesensor(){
-        return hardwareMap.voltageSensor.iterator().next();
-    }
-
 }
