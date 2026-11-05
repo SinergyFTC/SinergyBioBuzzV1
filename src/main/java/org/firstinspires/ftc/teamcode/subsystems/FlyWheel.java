@@ -64,7 +64,7 @@ public class FlyWheel {
 
     public Command periodic() {
         return infinite(() -> {
-            switch(mode) {
+            switch (mode) {
                 case OFF:
                     setPower(offpower);
                     return;
@@ -72,14 +72,14 @@ public class FlyWheel {
                     setPower(kP * (target - getVelocity()) + kV * target + kS * Math.signum(target));
                     break;
             }
-                    context.telemetry.addData("Flywheel/velocity", getVelocity());
-                    context.telemetry.addData("Flywheel/target", target);
-                    context.telemetry.addData("Flywheel/power", FlyWheelMotor.getPower());
-            }});
+            context.telemetry.addData("Flywheel/velocity", getVelocity());
+            context.telemetry.addData("Flywheel/target", target);
+            context.telemetry.addData("Flywheel/power", FlyWheelMotorL.getPower());
+        });
+        }
     }
 
     enum Mode {
         OFF,
         ON
-    }
 }
