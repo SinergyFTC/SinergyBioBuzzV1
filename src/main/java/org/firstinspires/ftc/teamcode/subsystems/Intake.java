@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static com.pedropathing.ivy.commands.Commands.conditional;
 import static com.pedropathing.ivy.commands.Commands.infinite;
 import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.commands.Commands.waitUntil;
 
 import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.behaviors.ConflictBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.util.Context;
@@ -13,6 +16,7 @@ public class Intake {
     public static double reversepower = -1.0;
     public static double offpower = 0.0;
     public static double onpower = 1.0;
+    public static double shortReverseTime = 150;
     private final Context context;
     private final DcMotorEx intakeMotor;
     private Mode mode = Mode.OFF;
@@ -38,6 +42,10 @@ public class Intake {
 
     public Command reverse() {
         return instant(() -> mode = Mode.REVERSE).requiring(intakeMotor);
+    }
+
+    public Command shortReversed() {
+        return instant(() -> reverse().then(waitMs(shortReverseTime)).then(on()).setConflictBehavior(ConflictBehavior.OVERRIDE));
     }
 
     public Command toggle() {

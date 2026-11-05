@@ -20,9 +20,9 @@ public class Hives {
             }
         } else {
             if (follower.pose().y() > 72) {
-                currentHive = BlueHiveLower;
-            } else {
                 currentHive = BlueHiveUpper;
+            } else {
+                currentHive = BlueHiveLower;
             }
         }
     }

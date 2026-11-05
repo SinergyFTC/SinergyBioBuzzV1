@@ -36,7 +36,7 @@ public class TuningTeleOp extends SinergyOpmode {
             );
             if(gamepad1.dpadUpWasPressed()) schedule(
                     blocker.unblockPolen(),
-                    blocker.blockNectar()
+                    blocker.unblockNectar()
             );
         });
     }

@@ -19,12 +19,6 @@ public final class SOTM {
         return timeOfFlight;
     }
 
-    public static Vector2D getTurretVelocity(Pose robotPose, Pose turretPose, Velocity robotVelocity) {
-        Vector2D offset = turretPose.toVector2D().minus(robotPose.toVector2D());
-        Vector2D rotation = offset.perpendicularLeft().times(robotVelocity.omega);
-        return robotVelocity.toVector2D().plus(rotation);
-    }
-
     public static Vector2D getAimVector(Pose turretPose, Vector2D turretVelocity, Pose goal, Alliance alliance) {
         Vector2D toGoal = goal.toVector2D().minus(turretPose.toVector2D());
         if (!enabled) return toGoal;

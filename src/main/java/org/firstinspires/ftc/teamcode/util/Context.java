@@ -15,23 +15,42 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
 import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 
+/**
+ *
+ * Centraliza o acesso ao hardware e à telemetria. Cada OpMode cria um Context
+ * e passa a mesma instância para todos os subsistemas (injeção de dependência),
+ * assim nenhum subsistema precisa buscar o hardwareMap por conta própria.
+ */
 @Config("Configuration")
 public class Context {
-    public static boolean AdvantageScope = false;
+
     public HardwareMap hardwareMap;
     public Telemetry telemetry;
 
+    //Cria o contexto a partir do Opmode em execução
     public Context(OpMode opmode) {
         hardwareMap = opmode.hardwareMap;
         telemetry = new MultipleTelemetry(opmode.telemetry,
                 FtcDashboard.getInstance().getTelemetry());
 
     }
-
+    /**
+     * Devolve um servo com cache de escrita.
+     * O CachingServo só envia a posição ao hardware quando ela muda,
+     * o que reduz o tempo de cada loop.
+     *
+     * @param name nome do servo na configuração do robô
+     */
     public Servo servo(String name) {
         return new CachingServo(hardwareMap.servo.get(name));
     }
 
+    /**
+     * Devolve um motor com cache de escrita.
+     * O CachingDcMotorEx só envia a potência ao hardware quando ela muda.
+     *
+     * @param name nome do motor na configuração do robô
+     */
     public DcMotorEx motor(String name) {
         return new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, name));
     }

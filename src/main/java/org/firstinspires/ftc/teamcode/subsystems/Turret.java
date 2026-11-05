@@ -25,7 +25,7 @@ public class Turret {
     private final Servo turretServoL;
 
     private double targetAngle = 0.0;
-    private double currentAngle = 0.0; // ângulo COMANDADO (servo não tem feedback)
+    private double currentAngle = 0.0;
 
     public Turret(Context context) {
         this.context = context;

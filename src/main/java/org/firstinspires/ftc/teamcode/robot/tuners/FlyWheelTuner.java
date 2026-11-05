@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.util.SinergyOpmode;
 
 @TeleOp(name = "Flywheel Tuner", group = "Tuners")
 @Config("Flywheel Tuner")
-public class FlyWheelTuner extends SinergyOpmode {
+public class FlyWheelTuner extends SinergyOpmode{
     public static boolean on = false;
     public static double target = 0;
 

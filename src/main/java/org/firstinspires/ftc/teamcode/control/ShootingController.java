@@ -31,7 +31,6 @@ public class  ShootingController {
 
         double angle = TurretAngle.toTarget(aim, robotPose.heading(), robotVelocity.omega);
         turret.setTarget(angle);
-
     }
 
 }

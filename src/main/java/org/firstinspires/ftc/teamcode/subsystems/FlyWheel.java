@@ -12,7 +12,8 @@ import org.firstinspires.ftc.teamcode.util.Context;
 
 public class FlyWheel {
     private final Context context;
-    private final DcMotorEx FlyWheelMotor;
+    private final DcMotorEx FlyWheelMotorR;
+    private final DcMotorEx FlyWheelMotorL;
     private double offpower = 0;
     private double target = 0;
     private Mode mode = Mode.OFF;
@@ -24,15 +25,16 @@ public class FlyWheel {
 
     public FlyWheel(Context context) {
         this.context = context;
-        FlyWheelMotor = context.motor("Flywheel");
+        FlyWheelMotorR = context.motor("FlywheelRight");
+        FlyWheelMotorL = context.motor("FlywheelLeft");
     }
 
     public Command on() {
-        return instant(() -> mode = Mode.ON).requiring(FlyWheelMotor);
+        return instant(() -> mode = Mode.ON).requiring(FlyWheelMotorR, FlyWheelMotorL);
     }
 
     public Command off() {
-        return instant(() -> mode = Mode.OFF).requiring(FlyWheelMotor);
+        return instant(() -> mode = Mode.OFF).requiring(FlyWheelMotorR, FlyWheelMotorL);
     }
 
     public Command toggle() {
@@ -48,11 +50,12 @@ public class FlyWheel {
     }
 
     public double getVelocity() {
-        return FlyWheelMotor.getVelocity();
+        return FlyWheelMotorR.getVelocity();
     }
 
     private void setPower(double power) {
-        FlyWheelMotor.setPower(power);
+        FlyWheelMotorR.setPower(power);
+        FlyWheelMotorL.setPower(power);
     }
 
     public boolean atTarget() {
@@ -63,11 +66,12 @@ public class FlyWheel {
         return infinite(() -> {
             switch(mode) {
                 case OFF:
-                    FlyWheelMotor.setPower(offpower);
-                    break;
+                    setPower(offpower);
+                    return;
                 case ON:
-                    FlyWheelMotor.setPower(kP * (target - getVelocity()) + kV * target + kS * Math.signum(target));
-
+                    setPower(kP * (target - getVelocity()) + kV * target + kS * Math.signum(target));
+                    break;
+            }
                     context.telemetry.addData("Flywheel/velocity", getVelocity());
                     context.telemetry.addData("Flywheel/target", target);
                     context.telemetry.addData("Flywheel/power", FlyWheelMotor.getPower());

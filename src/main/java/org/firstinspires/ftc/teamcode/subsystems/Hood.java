@@ -33,7 +33,12 @@ public class Hood {
         this.context = context;
         hoodServo = context.servo("hood");
     }
-
+    public Command enable() {
+        return instant(() -> enabled = true);
+    }
+    public Command disable() {
+        return instant(() -> enabled = false);
+    }
     public void setPosition(double position) {
         target = Utils.clamp(position, minPosition, maxPosition);
     }
@@ -59,14 +64,6 @@ public class Hood {
 
     public Command endShot() {
         return instant(() -> shooting = false);
-    }
-
-    public Command enable() {
-        return instant(() -> enabled = true);
-    }
-
-    public Command disable() {
-        return instant(() -> enabled = false);
     }
 
     public Command periodic() {

@@ -18,6 +18,7 @@ public abstract class SinergyOpmode extends OpMode {
     protected Blocker blocker;
     protected Context context;
     protected Hood hood;
+    protected Turret turret;
 
 
     protected static Alliance alliance() {
@@ -39,12 +40,16 @@ public abstract class SinergyOpmode extends OpMode {
         flyWheel = new FlyWheel(context);
         intake = new Intake(context);
         blocker = new Blocker(context);
+        hood = new Hood(context);
+        turret = new Turret(context);
 
         schedule(
                 driveTrain.periodic(),
                 flyWheel.periodic(),
                 intake.periodic(),
-                blocker.periodic()
+                blocker.periodic(),
+                hood.periodic(),
+                turret.periodic()
         );
 
         hubs = hardwareMap.getAll(LynxModule.class);
