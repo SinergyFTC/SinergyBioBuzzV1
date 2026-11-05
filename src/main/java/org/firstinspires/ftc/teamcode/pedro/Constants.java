@@ -16,17 +16,26 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+/**
+ * configuração do Pedro Pathing v3: define as 3 peças do Follower
+ * (drivetrain, localizador e algoritmo) e monta o Follower em create().
+ */
+
 public class Constants {
+    // drivetrain mecanum: nomes dos motores no Driver Hub e direções
     public static MecanumConfig drivetrainConfig = new MecanumConfig(c -> {
         c.frontLeftName.set("frontLeft");
         c.frontRightName.set("frontRight");
         c.backLeftName.set("backLeft");
         c.backRightName.set("backRight");
+        // lado direito invertido, pois os motores ficam espelhados
         c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
         c.frontRightDirection.set(DcMotorSimple.Direction.REVERSE);
         c.backLeftDirection.set(DcMotorSimple.Direction.FORWARD);
         c.backRightDirection.set(DcMotorSimple.Direction.REVERSE);
     });
+
+    //localizador GoBilda Pinpoint (odometria): pods, offsets (pol.) e direções dos encoders
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -37,31 +46,44 @@ public class Constants {
         c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.offsetUnits.set(DistanceUnit.INCH);
     });
+
+    /**
+     * Algoritmo Foresight: valores obtidos nos testes de tuning do Pedro
+     * (controles translacionais, de heading, freio e limites de velocidade).
+     * Não alterar sem refazer o tuning.
+     */
     public static ForesightConfig foresightConfig = new ForesightConfig(
             c -> {
+                //controle P translacional: ganho "primário" (longe) e "secundário" (perto, < 2.5)
                 Controller primaryTranslationalForward = Controller.proportional(0.23475157688330828);
                 Controller secondaryTranslationalForward = Controller.proportional(0.08673443498072252);
                 Controller primaryTranslationalLateral = Controller.proportional(0.5725636039254506);
                 Controller secondaryTranslationalLateral = Controller.proportional(0.21154695246918806);
 
+                // piecewise: usa o secundário perto do alvo e o primário a partir de 2.5
                 c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
                 c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
 
+                // feedforward de deslizar (coast) e frear (brake)
                 c.coast.set(Controller.proportionalFeedforward(0.010135282143155868));
                 c.brake.set(Controller.proportionalFeedforward(0.008614989821682488));
 
+                // heading: P + coeficientes de freio
                 c.headingFeedback.set(Controller.proportional(3.051955865762439));
                 c.headingBrakeCoefficients.set(Vector2D.cartesian(0.05901736447944886, 0.006722009676715713));
 
+                // modelo de frenagem (linear e quadrática) por eixo
                 c.linearBrakeCoefficients.set(Matrix.diag(0.003309039499285825, 0.023625951811087297));
                 c.quadraticBrakeCoefficients.set(Matrix.diag(0.003662976059490396, 0.0027855775838698253));
-
+               
+                // limites medidos do robô (pol/s e pol/s²)
                 c.maxAchievableForwardVelocity.set(81.34782573798601);
                 c.maxAchievableStrafeVelocity.set(62.57690619192363);
                 c.naturalForwardDeceleration.set(37.04123422412728);
                 c.naturalStrafeDeceleration.set(66.28317380050801);
             }
     );
+    //fábrica: monta o Follower = Localizador Pinpoint + Mecanum + Foresight
     public static Follower create(HardwareMap h) {
         return new Follower(
                 new PinpointLocalizer(h, localizerConfig),
