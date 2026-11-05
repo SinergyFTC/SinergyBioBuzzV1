@@ -73,7 +73,7 @@ public class Hood {
     public Command endShot() {
         return instant(() -> shooting = false);
     }
-
+    //Todo ciclo: calcula alvo - queda, limita e envia ao servo
     public Command periodic() {
         return infinite(() -> {
             output = Utils.clamp(target - shotDrop(), minPosition, maxPosition);
@@ -83,7 +83,7 @@ public class Hood {
             context.telemetry.addData("Hood/output", output);
         });
     }
-
+    //Quanto o hood deve "cair" agora: 0 fora do tiro; depois cresce linearmente até maximumDrop
     private double shotDrop() {
         if (!shooting) return 0;
         double time = Math.max(0, shotTimer.seconds() - dropDelay);
