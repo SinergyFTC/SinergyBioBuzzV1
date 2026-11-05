@@ -11,12 +11,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.Context;
 import org.firstinspires.ftc.teamcode.util.TurretAngle;
 
+/**
+ * Subsistema TURRET: torre giratória movida por dois servos (espelhados).
+ * Trabalha em RADIANOS, com 0 = virada para a frente do robô.
+ * Fluxo: o ShootingController define o alvo -> periodic() limita o ângulo
+ * (TurretAngle) -> converte para posição de servo -> envia aos dois servos.
+ */
+
  @Config("Turret")
 public class Turret {
-    public static double servoRangeDegrees = 1800;
-    public static double gearRatio = 60.0 / 22.0;
-    public static double centerPosition = 0.5;
+    public static double servoRangeDegrees = 1800;// curso total do servo (modo torque/rotação estendida)
+    public static double gearRatio = 60.0 / 22.0;// relação de engrenagens servo -> torre
+    public static double centerPosition = 0.5;// posição do servo com a torre centralizada
 
+ // Limites físicos da torre (evitam enrolar fios / bater na estrutura)
     public static double minAngle = Math.toRadians(-185);
     public static double maxAngle = Math.toRadians(185);
 
@@ -24,15 +32,15 @@ public class Turret {
     private final Servo turretServoR;
     private final Servo turretServoL;
 
-    private double targetAngle = 0.0;
-    private double currentAngle = 0.0;
+    private double targetAngle = 0.0;// ângulo desejado (rad)
+    private double currentAngle = 0.0; // ângulo comandado após limites (rad)
 
     public Turret(Context context) {
         this.context = context;
         turretServoR = context.servo("turretServoR");
         turretServoL = context.servo("turretServoL");
     }
-
+    //Define o ângulo alvo (usado pelo ShootingController todo ciclo).
     public void setTarget(double radians) {
         targetAngle = radians;
     }
@@ -44,19 +52,24 @@ public class Turret {
     public double getAngle() {
         return currentAngle;
     }
-
+// Comando: aponta a torre para um ângulo
     public Command setAngle(double radians) {
         return instant(() -> setTarget(radians)).requiring(turretServoR);
     }
-
+ //Comando: centraliza a torre (0 rad)
     public Command center() {
         return setAngle(0.0);
     }
 
+ //Comando: gira a torre um pequeno ângulo relativo (ajuste fino)
     public Command nudge(double radians) {
         return instant(() -> setTarget(currentAngle + radians)).requiring(turretServoR);
     }
-
+    /**
+     * Todo ciclo: normaliza o ângulo dentro de [minAngle, maxAngle]
+     * (escolhendo o caminho equivalente válido), converte e move os servos.
+     * Nota: servo não informa posição real, então currentAngle é o valor COMANDADO.
+     */
     public Command periodic() {
         return infinite(() -> {
             currentAngle = TurretAngle.normalizeAngle(targetAngle, currentAngle, minAngle, maxAngle);
@@ -69,7 +82,10 @@ public class Turret {
             context.telemetry.addData("Turret/servo position", position);
         });
     }
-
+    /**
+     * Converte ângulo da torre (rad) em posição de servo (0..1):
+     * ângulo * gearRatio = ângulo do servo; divide pelo curso total e soma o centro.
+     */
     private double angleToServo(double angle) {
         double servoAngle = angle * gearRatio;
         double position = centerPosition + servoAngle / Math.toRadians(servoRangeDegrees);
