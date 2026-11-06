@@ -12,11 +12,11 @@ import org.firstinspires.ftc.teamcode.util.Context;
 import java.util.function.DoubleSupplier;
 
 /**
- * subsistema BLOCKER: dois servos que seguram/liberam as peças (Pólen e Néctar)
- * antes de elas chegarem ao flywheel
- *
- * as posições são public static para serem ajustadas ao vivo pelo Dashboard
- * estão em 0.0 porque ainda precisam ser calibradas no robô
+  subsistema BLOCKER: dois servos que seguram/liberam as peças (Pólen e Néctar)
+  antes de elas chegarem ao flywheel
+ 
+  as posições são public static para serem ajustadas ao vivo pelo Dashboard
+  estão em 0.0 porque ainda precisam ser calibradas no robô
  */
 
 @Config("Blocker Subsystem")
