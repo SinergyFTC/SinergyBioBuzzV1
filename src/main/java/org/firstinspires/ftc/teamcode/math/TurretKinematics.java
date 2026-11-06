@@ -32,6 +32,6 @@ public class TurretKinematics {
      */
     public static Vector2D getTurretVelocity(Pose robotPose, Pose turretPose, Velocity velocity){
         Vector2D robot = turretPose.toVector2D().minus(robotPose.toVector2D());
-        return robotPose.toVector2D().plus(robot.perpendicularLeft()).times(velocity.omega);
+        return robotPose.toVector2D().plus(robot.perpendicularLeft().times(velocity.omega));
     }
 }
