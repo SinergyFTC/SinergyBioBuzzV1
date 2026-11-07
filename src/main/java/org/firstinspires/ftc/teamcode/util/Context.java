@@ -9,8 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
 import dev.frozenmilk.dairy.cachinghardware.CachingServo;
@@ -43,6 +44,12 @@ public class Context {
      */
     public Servo servo(String name) {
         return new CachingServo(hardwareMap.servo.get(name));
+    }
+
+    public Servo servo(String name, double lowUs, double upperUs) {
+        ServoImplEx servo = hardwareMap.get(ServoImplEx.class, name);
+        servo.setPwmRange(new PwmControl.PwmRange(lowUs, upperUs));
+        return new CachingServo(servo);
     }
 
     /**

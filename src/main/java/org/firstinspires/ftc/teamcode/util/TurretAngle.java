@@ -6,7 +6,7 @@ import com.pedropathing.utils.Angle;
 import com.pedropathing.utils.Utils;
 @Config("Setting AngularVelScaling")
 public class TurretAngle {
-    public static double angularVelocityScaling = 0.0;
+    public static double angularVelocityScaling = 1.0;
 
     public static double toTarget(Vector2D aimToGoal, double heading, double omega) {
         double toAngle = aimToGoal.toBodyFrame(heading).theta() - angularVelocityScaling * omega;

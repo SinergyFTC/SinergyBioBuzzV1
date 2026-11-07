@@ -35,7 +35,7 @@ public class SinergyCompetition extends SinergyOpmode {
         wraperloop(() -> {
             driveTrain.ManualDrive(
                     -gamepad1.left_stick_y,
-                    gamepad1.left_stick_x,
+                    gamepad1.right_trigger - gamepad1.left_trigger,
                     gamepad1.right_stick_x,
                     alliance()
             );

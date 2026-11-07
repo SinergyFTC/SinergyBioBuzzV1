@@ -16,74 +16,55 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-/**
- * configuração do Pedro Pathing v3: define as 3 peças do Follower
- * (drivetrain, localizador e algoritmo) e monta o Follower em create().
- */
-
 public class Constants {
-    // drivetrain mecanum: nomes dos motores no Driver Hub e direções
-    public static MecanumConfig drivetrainConfig = new MecanumConfig(c -> {
-        c.frontLeftName.set("frontLeft");
-        c.frontRightName.set("frontRight");
-        c.backLeftName.set("backLeft");
-        c.backRightName.set("backRight");
-        // lado direito invertido, pois os motores ficam espelhados
-        c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
-        c.frontRightDirection.set(DcMotorSimple.Direction.REVERSE);
-        c.backLeftDirection.set(DcMotorSimple.Direction.FORWARD);
-        c.backRightDirection.set(DcMotorSimple.Direction.REVERSE);
-    });
+    public static MecanumConfig drivetrainConfig = new MecanumConfig(
+            c -> {
+                c.frontLeftName.set("frontLeft");
+                c.backLeftName.set("backLeft");
+                c.frontRightName.set("frontRight");
+                c.backRightName.set("backRight");
 
-    //localizador GoBilda Pinpoint (odometria): pods, offsets (pol.) e direções dos encoders
+                c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.backLeftDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.backRightDirection.set(DcMotorSimple.Direction.FORWARD);
+            }
+    );
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        c.xPodOffset.set(5.81732283);
-        c.yPodOffset.set(0.216535);
+        c.xPodOffset.set(0.216535);
+        c.yPodOffset.set(5.74133858);
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
         c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.offsetUnits.set(DistanceUnit.INCH);
     });
-
-    /**
-     * Algoritmo Foresight: valores obtidos nos testes de tuning do Pedro
-     * (controles translacionais, de heading, freio e limites de velocidade).
-     * Não alterar sem refazer o tuning.
-     */
     public static ForesightConfig foresightConfig = new ForesightConfig(
             c -> {
-                //controle P translacional: ganho "primário" (longe) e "secundário" (perto, < 2.5)
-                Controller primaryTranslationalForward = Controller.proportional(0.23475157688330828);
-                Controller secondaryTranslationalForward = Controller.proportional(0.08673443498072252);
-                Controller primaryTranslationalLateral = Controller.proportional(0.5725636039254506);
-                Controller secondaryTranslationalLateral = Controller.proportional(0.21154695246918806);
+                Controller primaryTranslationalForward = Controller.proportional(0.49646359239564497);
+                Controller secondaryTranslationalForward = Controller.proportional(0.18343003163868318);
+                Controller primaryTranslationalLateral = Controller.proportional(0.8329100685181615);
+                Controller secondaryTranslationalLateral = Controller.proportional(0.3077380145505395);
 
-                // piecewise: usa o secundário perto do alvo e o primário a partir de 2.5
                 c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
                 c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
 
-                // feedforward de deslizar (coast) e frear (brake)
-                c.coast.set(Controller.proportionalFeedforward(0.010135282143155868));
-                c.brake.set(Controller.proportionalFeedforward(0.008614989821682488));
+                c.coast.set(Controller.proportionalFeedforward(0.015524665539982923));
+                c.brake.set(Controller.proportionalFeedforward(0.013195965708985484));
 
-                // heading: P + coeficientes de freio
-                c.headingFeedback.set(Controller.proportional(3.051955865762439));
-                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.05901736447944886, 0.006722009676715713));
+                c.headingFeedback.set(Controller.proportional(7.079715674998073));
+                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.08845464405615196, 0.004067389967709991));
 
-                // modelo de frenagem (linear e quadrática) por eixo
-                c.linearBrakeCoefficients.set(Matrix.diag(0.003309039499285825, 0.023625951811087297));
-                c.quadraticBrakeCoefficients.set(Matrix.diag(0.003662976059490396, 0.0027855775838698253));
-               
-                // limites medidos do robô (pol/s e pol/s²)
-                c.maxAchievableForwardVelocity.set(81.34782573798601);
-                c.maxAchievableStrafeVelocity.set(62.57690619192363);
-                c.naturalForwardDeceleration.set(37.04123422412728);
-                c.naturalStrafeDeceleration.set(66.28317380050801);
+                c.linearBrakeCoefficients.set(Matrix.diag(0.1562610433975114, 0.09453911344807722));
+                c.quadraticBrakeCoefficients.set(Matrix.diag(2.640275776158418E-4, 9.376675055594149E-4));
+
+                c.maxAchievableForwardVelocity.set(59.162877749969674);
+                c.maxAchievableStrafeVelocity.set(47.953190452477536);
+                c.naturalForwardDeceleration.set(82.22846859980062);
+                c.naturalStrafeDeceleration.set(86.8724519453942);
             }
     );
-    //fábrica: monta o Follower = Localizador Pinpoint + Mecanum + Foresight
     public static Follower create(HardwareMap h) {
         return new Follower(
                 new PinpointLocalizer(h, localizerConfig),

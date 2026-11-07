@@ -24,7 +24,7 @@ public class InterpolationTuner extends SinergyOpmode {
 
         @Override
         public void loop() {
-            wraperloop(() ->{
+            wraperloop(() -> {
             hood.setPosition(HoodPosition);
             flyWheel.setTarget(flyWheelVelocity);
 
