@@ -22,10 +22,10 @@ import java.util.function.DoubleSupplier;
 @Config("Blocker Subsystem")
 public final class Blocker {
     // Posições dos servos (0.0 a 1.0) - TODO: calibrar
-    public static double blockPositionPolen = 0.0;
-    public static double unblockPositionPolen = 0.0;
-    public static double blockPositionNectar = 0.0;
-    public static double unblockPositionNectar = 0.0;
+    public static double blockPositionPolen = 1;
+    public static double unblockPositionPolen = 0.4;
+    public static double blockPositionNectar = 0.5;
+    public static double unblockPositionNectar = 0.2;
 
     private final Context context;
     private final Servo blockerPolen;

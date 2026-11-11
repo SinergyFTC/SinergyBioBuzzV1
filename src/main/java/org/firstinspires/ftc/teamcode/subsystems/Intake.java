@@ -65,7 +65,7 @@ public class Intake {
     }
     //Alterna: se estiver desligado liga; caso contrário inverte.
     public Command toggle() {
-        return conditional(() -> mode == Mode.OFF, on(), reverse());
+        return conditional(() -> mode == Mode.OFF, on(), off());
     }
     //Roda todo ciclo: aplica ao motor a potência do modo atual
     public Command periodic() {

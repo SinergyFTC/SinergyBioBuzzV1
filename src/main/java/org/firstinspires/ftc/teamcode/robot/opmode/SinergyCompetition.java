@@ -5,6 +5,7 @@ import static com.pedropathing.ivy.Scheduler.schedule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.control.ShootingController;
+import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.Hives;
 import org.firstinspires.ftc.teamcode.util.SinergyOpmode;
 
@@ -17,6 +18,7 @@ public class SinergyCompetition extends SinergyOpmode {
     @Override
     public void init() {
         super.init();
+        turret.usePreviousStartingAngle();
         driveTrain.PreviousStartingPos();
         shootingController = new ShootingController(turret, flyWheel, hood, context);
     }
@@ -25,25 +27,31 @@ public class SinergyCompetition extends SinergyOpmode {
     public void start() {
         schedule(
                 blocker.blockPolen(),
-                blocker.unblockNectar()
+                blocker.blockNectar(),
+                flyWheel.on()
         );
-        flyWheel.on().schedule();
     }
 
     @Override
     public void loop() {
         wraperloop(() -> {
-            driveTrain.ManualDrive(
-                    -gamepad1.left_stick_y,
-                    gamepad1.right_trigger - gamepad1.left_trigger,
-                    gamepad1.right_stick_x,
-                    alliance()
-            );
-            shootingController.prepareShoot(
-                    driveTrain.follower.pose(),
-                    driveTrain.follower.velocity(),
-                    Hives.getCurrentHive(),
-                    alliance());
-        });
-    }
+                driveTrain.ManualDrive(
+                        -gamepad1.left_stick_y,
+                        gamepad1.left_trigger - gamepad1.right_trigger,
+                        gamepad1.right_stick_x
+                );
+                shootingController.prepareShoot(
+                        driveTrain.follower.pose(),
+                        driveTrain.follower.velocity(),
+                        Hives.getCurrentHive(),
+                        alliance());
+            });
+
+        if (gamepad2.rightBumperWasPressed()) intake.on().schedule();
+        if (gamepad2.rightBumperWasReleased()) intake.off().schedule();
+        if (gamepad2.dpadLeftWasPressed()) setAlliance(Alliance.BLUE);
+        if (gamepad2.dpadRightWasPressed()) setAlliance(Alliance.RED);
+
+        if (gamepad2.rightBumperWasPressed()) flyWheel.toggle();
+        }
 }

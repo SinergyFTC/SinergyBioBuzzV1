@@ -1,92 +1,76 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-
-import static com.pedropathing.ivy.commands.Commands.infinite;
-import static com.pedropathing.ivy.commands.Commands.instant;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.ivy.Command;
-import com.pedropathing.utils.Utils;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.util.Context;
-/**
- * Subsistema HOOD: servo que ajusta o ângulo de saída da peça.
- * Também compensa a "queda" do hood durante o tiro: depois de dropDelay
- * segundos, o hood desce progressivamente (shotScalar por segundo) até maximumDrop.
- */
 
-@Config("Hood Subsystem")
-public class Hood {
-    public static double minPosition = 0.0;// limite mínimo do servo
-    public static double maxPosition = 1.0; // limite máximo do servo
-    public static double servoIncrement = 0.01;// passo dos botões increment/decrement
-    public static double shotScalar = 0;// velocidade da queda durante o tiro
-    public static double maximumDrop = 0;// queda máxima permitida
-    public static double dropDelay = 0;// atraso (s) antes de começar a cair
+import java.util.function.DoubleUnaryOperator;
 
-    private final Context context;
+import static com.pedropathing.ivy.commands.Commands.infinite;
+
+@Config
+public final class Hood {
+    public static double shotScalar = 0;
+    public static double servoIncrement = 0.01;
+    public static double maximumDrop = 0;
+    public static double dropDelay = 0;
     private final Servo hoodServo;
-    private final ElapsedTime shotTimer = new ElapsedTime();// tempo desde o início do tiro
+    private final Context context;
+    private final ElapsedTime shotTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private boolean enabled = true;
+    private double target = 0;
+    private boolean isShooting = false;
 
-    private boolean enabled = true;// se false, o servo não recebe posição
-    private boolean shooting = false;// true durante um tiro
-    private double target = 0;// posição desejada
-    private double output = 0;// posição enviada (alvo - queda)
     public Hood(Context context) {
         this.context = context;
+
         hoodServo = context.servo("hood");
     }
-    //Habilita o envio de posição ao servo
-    public Command enable() {
-        return instant(() -> enabled = true);
+
+    public void enable() {
+        enabled = true;
     }
-    //Desabilita o envio de posição ao servo
-    public Command disable() {
-        return instant(() -> enabled = false);
+
+    public void disable() {
+        enabled = false;
     }
-    //Define o alvo, limitado entre min e max
-    public void setPosition(double position) {
-        target = Utils.clamp(position, minPosition, maxPosition);
+
+    public void startShot() {
+        isShooting = true;
+        shotTimer.reset();
+    }
+
+    public void endShot() {
+        isShooting = false;
     }
 
     public double getPosition() {
         return target;
     }
-    //Sobe o hood um passo (ajuste fino pelo operador)
-    public Command increment() {
-        return instant(() -> setPosition(target + servoIncrement)).requiring(hoodServo);
+
+    public void setPosition(double position) {
+        target = position;
     }
-//Desce o hood um passo
-    public Command decrement() {
-        return instant(() -> setPosition(target - servoIncrement)).requiring(hoodServo);
+
+    public void setPosition(DoubleUnaryOperator setter) {
+        setPosition(setter.applyAsDouble(getPosition()));
     }
-// /Marca o início do tiro e zera o cronômetro
-    public Command startShot() {
-        return instant(() -> {
-            shooting = true;
-            shotTimer.reset();
-        });
+
+    public void increment() {
+        setPosition(position -> position + servoIncrement);
     }
-    //Marca o fim do tiro
-    public Command endShot() {
-        return instant(() -> shooting = false);
+
+    public void decrement() {
+        setPosition(position -> position - servoIncrement);
     }
-    //Todo ciclo: calcula alvo - queda, limita e envia ao servo
+
     public Command periodic() {
         return infinite(() -> {
-            output = Utils.clamp(target - shotDrop(), minPosition, maxPosition);
-            if (enabled) hoodServo.setPosition(output);
-
-            context.telemetry.addData("Hood/target", target);
-            context.telemetry.addData("Hood/output", output);
+            setPosition(isShooting ? Math.min(target, Math.max(target - (shotTimer.seconds() - dropDelay) * shotScalar, target - maximumDrop)) : target);
+            if (enabled) hoodServo.setPosition(target);
+            context.telemetry.addData("Hood/Position", getPosition());
         });
-    }
-    //Quanto o hood deve "cair" agora: 0 fora do tiro; depois cresce linearmente até maximumDrop
-    private double shotDrop() {
-        if (!shooting) return 0;
-        double time = Math.max(0, shotTimer.seconds() - dropDelay);
-        return Math.min(time * shotScalar, maximumDrop);
     }
 }

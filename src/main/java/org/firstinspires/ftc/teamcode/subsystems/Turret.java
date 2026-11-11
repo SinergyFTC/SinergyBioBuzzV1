@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.util.TurretAngle;
 
  @Config("Turret")
 public class Turret {
-    public static double centerPosition = 0.512;// posição do servo com a torre centralizada
+    public static double centerPosition = 0.667;// posição do servo com a torre centralizada
 
  // Limites físicos da torre (evitam enrolar fios / bater na estrutura)
     public static double minAngle = Math.toRadians(-185);
@@ -91,7 +91,7 @@ public class Turret {
      * ângulo * gearRatio = ângulo do servo; divide pelo curso total e soma o centro.
      */
     private double angleToServo(double angle) {
-        double servoAngle = angle * (60.0 / 22.0);
+        double servoAngle = angle * (64.0 / 22.0);
         double position = centerPosition + servoAngle / Math.toRadians(1800);
         return Utils.clamp(position, 0.0, 1.0);
     }

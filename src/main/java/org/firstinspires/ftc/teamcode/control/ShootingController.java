@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.control;
 
 import com.pedropathing.math.*;
 
+import org.firstinspires.ftc.teamcode.math.Interpolator;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 import org.firstinspires.ftc.teamcode.math.SOTM;
@@ -45,6 +46,8 @@ public class  ShootingController {
         Vector2D virtualPosition = goal.toVector2D().minus(aim);
 
         double angle = TurretAngle.toTarget(aim, robotPose.heading(), robotVelocity.omega);
+
+        flyWheel.setTarget(Interpolator.getFlywheelVelocity(virtualPosition, alliance));
         turret.setTarget(angle);
     }
 

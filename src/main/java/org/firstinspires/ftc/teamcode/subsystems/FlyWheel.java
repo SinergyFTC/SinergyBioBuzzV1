@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Context;
  * Controle de velocidade = P + feedforward:
  *   potência = kP*(alvo - velocidade) + kV*alvo + kS*sinal(alvo)
  *   kP corrige o erro, kV compensa a velocidade desejada, kS vence o atrito estático.
- */    
+ */
 
 public class FlyWheel {
     private final Context context;
@@ -27,9 +27,9 @@ public class FlyWheel {
 
     public static int toleranceVel = 25;// erro máximo aceito para "chegou no alvo"
     // Ganhos do controle - TODO: calibrar (estão zerados)
-    public static double kP = 0;
-    public static double kV = 0;
-    public static double kS = 0;
+    public static double kP = 0.008;
+    public static double kV = 0.000328;
+    public static double kS = 0.064;
 
     public FlyWheel(Context context) {
         this.context = context;
@@ -56,7 +56,7 @@ public class FlyWheel {
      * ATENÇÃO: o parâmetro "target" sombreia o campo, então este método
      * devolve o valor recebido e não o alvo salvo. O ideal é remover o parâmetro.
      */
-    public double getTarget(double target) {
+    public double getTarget() {
         return target;
     }
     //Velocidade atual medida no encoder do motor direito
@@ -86,7 +86,8 @@ public class FlyWheel {
             }
             context.telemetry.addData("Flywheel/velocity", getVelocity());
             context.telemetry.addData("Flywheel/target", target);
-            context.telemetry.addData("Flywheel/power", FlyWheelMotorL.getPower());
+            context.telemetry.addData("Flywheel/power", FlyWheelMotorR.getPower());
+            context.telemetry.addData("Flywheel/mode", mode);
         });
         }
     }

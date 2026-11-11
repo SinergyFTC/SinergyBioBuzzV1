@@ -62,6 +62,7 @@ public abstract class SinergyOpmode extends OpMode {
         Scheduler.execute();
 
         context.telemetry.addData("Alliance", alliance());
+        context.telemetry.addData("Hive", Hives.getCurrentHive());
         context.telemetry.update();
     }
 
@@ -70,6 +71,7 @@ public abstract class SinergyOpmode extends OpMode {
         driveTrain.update();
         Hives.swapHive(driveTrain.follower, alliance());
         context.telemetry.addData("Robot/alliance", alliance());
+        context.telemetry.addData("ActualHive", Hives.getCurrentHive());
 
         runnable.run();
 

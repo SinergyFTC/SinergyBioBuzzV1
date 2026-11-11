@@ -16,12 +16,12 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
  */
 
 @Config("config SOTM")
-public final class SOTM {
+public final class   SOTM {
     public static boolean enabled = true;// liga/desliga a compensação
     public static double timeOfFlight = .25; // tempo de voo fixo (s) - TODO: modelar por distância
-    public static int iterations = 5; // nº de refinamentos
-    public static double radialGain = 1.0; // ganho da compensação na direção do gol
-    public static double tangentialGain = 1.0;// ganho da compensação lateral
+    public static int iterations = 10; // nº de refinamentos
+    public static double radialGain = 1.7; // ganho da compensação na direção do gol
+    public static double tangentialGain = 2.7;// ganho da compensação lateral
     //Tempo de voo em função da distância (por enquanto constante)
     public static double flightTime(double distance) {
         return timeOfFlight;
@@ -61,6 +61,7 @@ public final class SOTM {
                     .rotate(angleToGoal);
 
             aim = toGoal.minus(shift);// mira compensada
+            Vector2D virtual = goal.toVector2D().minus(aim);
             tof = flightTime(aim.magnitude());// atualiza o tempo de voo
         }
 

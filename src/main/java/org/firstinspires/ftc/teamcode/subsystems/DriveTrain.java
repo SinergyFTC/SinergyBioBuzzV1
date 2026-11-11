@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitUntil;
 
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -29,12 +32,17 @@ public class DriveTrain {
         follower = Constants.create(context.hardwareMap);
     }
     //salva uma pose (ex.: no fim do autônomo) para o TeleOp continuar dali
-    public static void localize(Pose pose) {
-        previousPose = pose;
+    public void localize(Pose pose) {
+        follower.setPose(pose);
     }
     //Define a pose inicial do robô como a última pose salva
     public void PreviousStartingPos() {
         follower.setPose(previousPose);
+    }
+
+    public Command followPath(Path path) {
+        return instant(() -> follower.follow(path))
+                .then(waitUntil(() -> !follower.isBusy())).requiring(follower);
     }
     /**
      * Direção manual FIELD-CENTRIC (o "frente" do joystick é sempre o mesmo
@@ -42,16 +50,8 @@ public class DriveTrain {
      * Na aliança azul soma PI ao ângulo, invertendo a referência
      * driveOrHold: se o joystick estiver parado, o robô segura a posição
      */
-    public void ManualDrive(double forward, double lateral, double turn, Alliance alliance) {
-        double offset = (alliance == Alliance.BLUE) ? Math.PI : 0;
-        DrivePowers powers = ManualDrive.fieldCentric(
-                forward,
-                lateral,
-                turn,
-                follower.pose().heading(),
-                offset
-        );
-        ManualDrive.driveOrHold(follower, powers);
+    public void ManualDrive(double forward, double lateral, double turn) {
+        follower.manual(forward, lateral, turn);
     }
 
     public void update() {

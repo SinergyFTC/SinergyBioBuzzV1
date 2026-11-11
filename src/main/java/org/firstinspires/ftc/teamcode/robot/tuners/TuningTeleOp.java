@@ -19,7 +19,7 @@ public class TuningTeleOp extends SinergyOpmode {
     @Override
     public void loop() {
         wraperloop(() -> {
-            driveTrain.ManualDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, alliance());
+            driveTrain.ManualDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             if(gamepad1.crossWasPressed()) flyWheel.toggle().schedule();
             flyWheel.setTarget(flywheelTarget);

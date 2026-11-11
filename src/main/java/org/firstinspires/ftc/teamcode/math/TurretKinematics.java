@@ -9,8 +9,8 @@ import com.pedropathing.math.Velocity;
  */
 public class TurretKinematics {
     // Posição da torre em relação ao centro do robô (polegadas, referencial do robô)
-    public static double TurretOffsetInchesX = -5;
-    public static double TurretOffsetInchesY = -3;
+    public static double TurretOffsetInchesX = -4.17;
+    public static double TurretOffsetInchesY = -3.76;
 
         /**
       Pose da torre no CAMPO. compose() gira o offset pelo heading do robô
