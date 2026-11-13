@@ -14,7 +14,7 @@ public final class Interpolator {
             new double[]{10.7, 33.0},
             new double[][]{
                     {895, 860},
-                    {880, 900}
+                    {890, 870}
             });
 
     private static double interpolate(Interpolation2D interpolation, Vector2D pose, Alliance alliance) {

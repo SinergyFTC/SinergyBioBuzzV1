@@ -19,6 +19,7 @@ public abstract class SinergyOpmode extends OpMode {
     protected Context context;
     protected Hood hood;
     protected Turret turret;
+    protected FlyWheelNectar flyWheelNectar;
 
 
     protected static Alliance alliance() {
@@ -42,6 +43,7 @@ public abstract class SinergyOpmode extends OpMode {
         blocker = new Blocker(context);
         hood = new Hood(context);
         turret = new Turret(context);
+        flyWheelNectar = new FlyWheelNectar(context);
 
         schedule(
                 driveTrain.periodic(),

@@ -4,6 +4,7 @@ import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.api.Paths;
@@ -45,15 +46,19 @@ public class RedNearHive extends SinergyOpmode {
     public void start() {
         schedule(
                 sequential(
-                        waitUntil(() -> flyWheel.getVelocity() >= flyWheel.getTarget() * 0.8),
+                        flyWheel.on(),
+                        race(waitUntil(flyWheel::atTarget), waitMs(1000)),
                         shoot(),
                         intake.on(),
                         driveTrain.followPath(paths.toIntake()),
                         driveTrain.followPath(paths.toOtherSide()),
-                        parallel(driveTrain.followPath(paths.toSecondRowShoot()),
-                                sequential(waitUntil(() ->
-                                        driveTrain.follower.parametricCompletion() > 0.85)),
-                                            shoot()),
+                        parallel(
+                                driveTrain.followPath(paths.toSecondRowShoot()),
+                                sequential(
+                                        waitUntil(() -> driveTrain.follower.parametricCompletion() > 0.95),
+                                        shoot()
+                                )
+                        ),
                         driveTrain.followPath(paths.toPark()),
                         intake.off(),
                         flyWheel.off()
@@ -73,7 +78,7 @@ public class RedNearHive extends SinergyOpmode {
     }
 
     private static class AutoPaths {
-        private final PoseFactory poseFactory = PoseFactory.degrees().mirrorX(70.75);
+        private final PoseFactory poseFactory = PoseFactory.degrees();
 
         private final Pose start = poseFactory.of(62.2, 9.0, 180);
         private final Pose toIntake = poseFactory.of(12.5677, 11.4956, 270);

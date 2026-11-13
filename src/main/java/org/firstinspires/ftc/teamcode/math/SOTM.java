@@ -17,11 +17,11 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 
 @Config("config SOTM")
 public final class   SOTM {
-    public static boolean enabled = true;// liga/desliga a compensação
+    public static boolean enabled = false ;// liga/desliga a compensação
     public static double timeOfFlight = .25; // tempo de voo fixo (s) - TODO: modelar por distância
     public static int iterations = 10; // nº de refinamentos
     public static double radialGain = 1.7; // ganho da compensação na direção do gol
-    public static double tangentialGain = 2.7;// ganho da compensação lateral
+    public static double tangentialGain = 2.1;// ganho da compensação lateral
     //Tempo de voo em função da distância (por enquanto constante)
     public static double flightTime(double distance) {
         return timeOfFlight;

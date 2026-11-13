@@ -5,6 +5,7 @@ import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.api.Paths;
@@ -31,7 +32,7 @@ public class BlueNearHive extends SinergyOpmode {
     public void init() {
         super.init();
         paths = new AutoPaths();
-        turret.setStartingAngle(-90);
+        turret.setStartingAngle(0);
         driveTrain.localize(paths.start());
         shootingController = new ShootingController(turret, flyWheel, hood, context);
     }
@@ -47,15 +48,18 @@ public class BlueNearHive extends SinergyOpmode {
         schedule(
                 sequential(
                         flyWheel.on(),
-                        waitUntil(() -> flyWheel.getVelocity() >= flyWheel.getTarget() * 0.8),
+                        race(waitUntil(flyWheel::atTarget), waitMs(1000)),
                         shoot(),
                         intake.on(),
                         driveTrain.followPath(paths.toIntake()),
-                            driveTrain.followPath(paths.toOtherSide()),
-                                parallel(driveTrain.followPath(paths.toSecondRowShoot()),
-                                    sequential(waitUntil(() ->
-                                            driveTrain.follower.parametricCompletion() > 0.85)),
-                                        shoot()),
+                        driveTrain.followPath(paths.toOtherSide()),
+                        parallel(
+                                driveTrain.followPath(paths.toSecondRowShoot()),
+                                sequential(
+                                        waitUntil(() -> driveTrain.follower.parametricCompletion() > 0.95),
+                                        shoot()
+                                )
+                        ),
                         driveTrain.followPath(paths.toPark()),
                         intake.off(),
                         flyWheel.off()

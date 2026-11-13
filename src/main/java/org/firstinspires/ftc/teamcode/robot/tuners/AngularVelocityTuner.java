@@ -15,7 +15,7 @@ public class AngularVelocityTuner extends SinergyOpmode {
 
     public void init() {
         super.init();
-        driveTrain.follower.setPose(new Pose(58.0, 8.0, 270));
+        driveTrain.follower.setPose(new Pose(58.0, 8.0, Math.toRadians(90)));
         turret.setStartingAngle(0);
         shootingController = new ShootingController(turret, flyWheel, hood, context);
     }
@@ -34,7 +34,7 @@ public class AngularVelocityTuner extends SinergyOpmode {
                     alliance()
             );
 
-            if (gamepad1.rightBumperWasPressed()) flyWheel.on().schedule();
+            if (gamepad1.rightBumperWasPressed()) flyWheel.toggle().schedule();
 
             if(gamepad1.rightTriggerWasPressed()) intake.on().schedule();
             if(gamepad1.rightTriggerWasReleased()) intake.off().schedule();

@@ -49,6 +49,6 @@ public class  ShootingController {
 
         flyWheel.setTarget(Interpolator.getFlywheelVelocity(virtualPosition, alliance));
         turret.setTarget(angle);
-    }
+}
 
 }
